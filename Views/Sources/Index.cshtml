@@ -1,0 +1,60 @@
+﻿@*@model IEnumerable<CustomerManagementSystem.Models.tblSource>*@
+@model IPagedList<CustomerManagementSystem.Models.tblSource>
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@using PagedList;
+@using PagedList.Mvc;
+
+
+    <h3>Sources</h3>
+
+<p>
+    @*@Html.ActionLink("Create New", "Create")*@
+    <button type="button" class="btn btn-primary btn-lg" onclick="location.href='@Url.Action("Create")'">Add New Item</button>
+
+    @using (Html.BeginForm("Index", "Sources", FormMethod.Get))
+    {
+        <input type="text" name="searchText" placeholder="Enter Source Name...." />
+        <input type="submit" name="submit" value="Search" />
+    }
+
+</p>
+<table class="table table-responsive table-striped table-hover table-responsive">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Source)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Color)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Source)
+            </td>
+            <td>
+                @*@Html.DisplayFor(modelItem => item.Color)*@
+                <span style="padding:4px; color:white; font-weight: 700; border-radius:5px; background:@item.Color">@Html.DisplayFor(modelItem => item.Color)</span>
+            </td>
+            <td>
+                @*@Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+                    @Html.ActionLink("Details", "Details", new { id=item.ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id=item.ID })*@
+
+                <button type="button" class="btn btn-success btn-xs" onclick="location.href='@Url.Action("Edit", new { id = item.ID })'">Details</button>
+
+            </td>
+        </tr>
+    }
+
+</table>
+
+@Html.PagedListPager(Model, i => Url.Action("Index", "Sources", new { i, searchText = Request.QueryString["searchText"] }))

@@ -1,0 +1,173 @@
+﻿@*@model IEnumerable<CustomerManagementSystem.Models.tblClient>*@
+@model IPagedList<CustomerManagementSystem.Models.tblClient>
+
+
+
+@using CustomerManagementSystem.App_Code
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@using PagedList;
+@using PagedList.Mvc;
+
+    <h3>Clients</h3>
+
+<p>
+    @*@Html.ActionLink("Create New", "Create")*@
+
+    <button type="button" class="btn btn-primary btn-lg" onclick="location.href='@Url.Action("Create")'">Add New Item</button>
+    
+    @using (Html.BeginForm("Index","Clients",FormMethod.Get))
+    {
+        <input type="text" name="searchText" placeholder="Enter Client Name...." />
+        <input type="submit" name="submit" value="Search" />
+    }
+</p>
+
+@{
+    Dictionary<string, string> DictAgent = new Dictionary<string, string>();
+
+    AgentInfo objAgentInfo = new AgentInfo();
+    DictAgent = objAgentInfo.DictionaryAgent();
+
+
+    Dictionary<string, string> DictStatus = new Dictionary<string, string>();
+
+    StatusInfo objStatusInfo = new StatusInfo();
+    DictStatus = objStatusInfo.DictionaryStatus();
+
+
+    Dictionary<string, string> DictSource = new Dictionary<string, string>();
+
+    SourceInfo objSourceInfo = new SourceInfo();
+    DictSource = objSourceInfo.DictionarySource();
+
+}
+
+
+<table class="table table-responsive table-striped table-hover table-responsive">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Screen)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Product)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Company)
+        </th>
+        @*<th>
+                @Html.DisplayNameFor(model => model.Message)
+            </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.First().Agent)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Source)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().IP)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().StartDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().EndDate)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Screen)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Company)
+            </td>
+            @*<td>
+                    @Html.DisplayFor(modelItem => item.Message)
+                </td>*@
+            <td>
+                @*@Html.DisplayFor(modelItem => item.Agent)*@
+                <span style="padding:4px; color:white; font-weight: 700; border-radius:5px; background:@DictAgent[item.Agent]">@Html.DisplayFor(modelItem => item.Agent)</span>
+            </td>
+            <td>
+                @*@Html.DisplayFor(modelItem => item.Status)*@
+                <span style="padding:4px; color:white; font-weight: 700; border-radius:5px; background:@DictStatus[item.Status]">@Html.DisplayFor(modelItem => item.Status)</span>
+            </td>
+            <td>
+                @*@Html.DisplayFor(modelItem => item.Source)*@
+                <span style="padding:4px; color:white; font-weight: 700; border-radius:5px; background:@DictSource[item.Source]">@Html.DisplayFor(modelItem => item.Source)</span>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IP)
+            </td>
+            <td>
+                @{
+                    DateTime dtstartDate = item.StartDate;
+                    var startDate = dtstartDate.ToString("dd/MM/yyyy");
+                }
+                @Html.DisplayFor(modelItem => startDate)
+            </td>
+            <td>
+                @*@{
+                        DateTime dtendDate = item.EndDate;
+                        var endDate = dtendDate.ToString("dd/MM/yyyy");
+                    }
+                    @Html.DisplayFor(modelItem => endDate)*@
+
+                @{
+                    DateTime dtendDate = item.EndDate;
+                    var endDate = dtendDate.ToString("dd/MM/yyyy");
+
+
+                    //if (endDate == DateTime.Now.Date.AddDays(1).ToString("dd/MM/yyyy"))
+
+                    if (item.EndDate < DateTime.Now.Date)
+                    {
+                        <span style="padding:4px; color:white; font-weight: 700; border-radius:5px; background:red ">@Html.DisplayFor(modelItem => endDate)</span>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => endDate)
+                    }
+                }
+            </td>
+
+
+            <td>
+                @*@Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })*@
+
+                <button type="button" class="btn btn-success btn-xs" onclick="location.href='@Url.Action("Edit", new { id = item.ID })'">Details</button>
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+@Html.PagedListPager(Model, i=>Url.Action("Index","Clients", new { i,searchText=Request.QueryString["searchText"] }))
